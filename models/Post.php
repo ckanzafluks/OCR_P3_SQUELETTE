@@ -6,6 +6,7 @@
  */
 class Post extends Manager
 {
+    
     /**
      * 
      */
@@ -20,7 +21,7 @@ class Post extends Manager
     public function getListPosts()
     {
         $db       = $this->_db;
-        $request  = $db->query('SELECT * FROM posts');
+        $request  = $db->query('SELECT id, title, content FROM posts WHERE title like("%Chapitre%")');
         $result   = $request->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }

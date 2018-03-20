@@ -3,12 +3,13 @@
 // Definition du path absolu
 define("ABSOLUTE_PATH", dirname(__FILE__));
 
-// Inclusion du controleur 
-require('controllers/frontend.php');
+// autoloader, chargement automatique des classes
+function __autoload($className) {
 
-// Autoloader, chargement automatique des classes
-spl_autoload_register( 'custom_autoloader' );
-function custom_autoloader($className) {
+    $invalidChars = array(
+        '.', '\\', '/', ':', '*', '?', '"', '<', '>', "'", '|'
+    );    
+    $className = str_replace($invalidChars, '', $className);
     $path      = ABSOLUTE_PATH .'/models/';
     $filename  = $path .$className . '.php';
     if ( file_exists($filename) ) {
@@ -18,20 +19,24 @@ function custom_autoloader($className) {
 
 
 
-$action = "";
-if ( !empty($_GET['action'] )) {
-	$action = $_GET['action'];
+require_once(ABSOLUTE_PATH. '/controllers/frontend.php');
+
+
+
+
+if (isset($_GET['action'])) {
+    if ($_GET['action'] == 'listPosts') {
+        listPosts();
+    }
+    elseif ($_GET['action'] == 'post') {
+        if (isset($_GET['id']) && $_GET['id'] > 0) {
+            post();
+        }
+        else {
+            echo 'Erreur : aucun identifiant de billet envoyé';
+        }
+    }
 }
-switch ( $action  ) {
-
-	// Liste les billets disponibles
-	case 'listPosts':
-		listPosts();
-		break;
-
-  	// Par défaut, on affiche la page d'accueil
-	default:
-		homePage();
-		break;
-
+else {
+    homepage();
 }
